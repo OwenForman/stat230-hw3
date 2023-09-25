@@ -1,0 +1,7 @@
+---
+title: "`r params$document_title`"
+author: "Owen Forman"
+output: pdf_document
+params:
+  document_title: "Stat230 - HW 3"
+---
