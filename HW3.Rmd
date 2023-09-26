@@ -60,13 +60,131 @@ pcb_new %>%
 
 ```
 
+2b)
 
+\textbf{Answer:} While we could not justify fitting a SLR model onto the previous graph in 2a), we can justify this model being used in the "Logged PCB Levels 1985 vs 1984" seen below. This is because the data has been transformed using the log function, which has uncovered the linear relationship between pcb84 and pcb85. This can clearly be seen visually, as the trend went from following an exponential line of some kind, to a more controlled linear line. While there are still outliers (which will be assessed in the coming problems), there are only really two or three of note, which may be the result of key information left out of this analysis. Though the reason these points are so extreme cannot be determined, it is safe to say given the low number of outliers, and the extremely strong linear relationship the rest of the data appears to follow, that we can still reasonably use an SLR model despite these outlier points.
 ```{r problem 2b}
 
-#creates scatterplot of pcb85 vs pcb84.
+#creates scatterplot of log(pcb85) vs log(pcb84).
 ggplot(data=pcb, aes(x = log(pcb84), y = log(pcb85))) + 
   geom_point() +
   labs(title = "Logged PCB Levels 1985 vs 1984", x = "log(PCB 1984) (in ppm)", y ="log(PCB 1985) (in ppm)")
 
+```
+2c)
+
+\textbf{Answer:} Some of the values = -Inf because the test sites had 0 listed for pcb levels in 1984 and 1985. Since the lim x -> 0 lnx = -Inf it is clear to see that when we too the natural log of these 0 values R spits back -Inf as the answer, since ln(0) is technically undefined.
+```{r problem 2c}
+#creates mutated dataset with log(pcb85) and log(pcb84) values
+pcb_log <- pcb %>%
+  mutate(., pcb84 = log(pcb84), pcb85 = log(pcb85))
+
+#finds which of these values are less than 0, aka -Inf
+which(pcb_log$pcb84 < 0)
+which(pcb_log$pcb85 < 0)
+
+#finds which of the original (non-logged) values are = 0
+which(pcb$pcb84 == 0)
+which(pcb$pcb85 == 0)
+
+#locates which sites had -Inf values and prints them
+pcb_log[c(12,14,16,18,19,21,22,23),]
+
+#filters -Inf values out
+pcb_log_filtered <- pcb_log %>%
+  filter(., pcb84 > 0, pcb85 >0)
+```
+
+2d)
+
+\textbf{Answer:}
+Model Assumptions:
+As currently stands, our model assumptions are not met. Firstly, there appears to be a clear linear trend in the Residual plot, which indicates that our assumption of linearity and constant variance are not reasonable for this model.
+
+Next, for the assumption of Normality, we can observe the QQ plot. The QQ-plot is not perfect either, but does appear to generally track the expected normal quantiles. Other than the two outlier points which fall drastically off of the line, and a bit of bowing at both ends of the plot, it appears as if Normality may be met.  
+
+Lastly, independence, which is especially hard to check in this example since almost no information about how the data was collected was given. However, one possible cause for concern is that its possible some of these rivers lead into each other (there is no evidence for or against this given in the data description so while it may be unlikely it can't be completely disregarded). If two or more of these rivers attach it wouldn't be absurd to see the pcb levels of one river affect that of another, causing them to become dependent.
+
+Outliers:
+The two obvious outliers are Boston Harbor and Delaware Bay. which correspond to rows 4 and 10 respectively (in the filtered log dataset)
+```{r problem 2d}
+#creates scatterplot of log(pcb85) vs log(pcb84) filtered to have no -Inf values.
+ggplot(data=pcb_log_filtered, aes(x = pcb84, y = pcb85)) + 
+  geom_point() +
+  geom_smooth(method = "lm", se = FALSE)
+  labs(title = "Filtered logged PCB Levels 1985 vs 1984", x = "log(PCB 1984) (in ppm)", y ="log(PCB 1985) (in ppm)")
+
+```
+
+```{r problem 2d.2}
+  pcb_log_filtered_fit <- lm(data = pcb_log_filtered, pcb85 ~ pcb84)
+
+  pcb_log_filtered_aug <- augment(pcb_log_filtered_fit)
+  
+  ggplot(pcb_log_filtered_aug, aes(x = pcb84, y = .resid)) +
+    geom_point() +
+    geom_hline(yintercept = 0, linetype = "dashed") +
+    labs(title = "Log(Pcb) Resid Plot)", y = "Residuals", x = "Log(Pcb84)")
+
+
+  ggplot(pcb_log_filtered_aug, aes(sample = .resid)) +
+    geom_qq() +
+    geom_qq_line() +
+    labs(title = "Log(PCB) Q-Q Plot", y = "Sample Quantiles", x = "Normal Quantiles")
+
+```
+```{r problem 2d.3}
+
+#finds which entries have resid > 2 (upper outlier) and resid < -1 (lower outlier)
+which(pcb_log_filtered_aug$.resid > 2 | pcb_log_filtered_aug$.resid < -1)
+
+#prints out the entries (note we found which ones they were in the augmented dataset, and then locate them in the original unaugmented filtered dataset)
+pcb_log_filtered[c(4,10),]
+
+
+```
+
+2e)
+
+\textbf{Answer:} After removing the outliers the model now appears to better represent the mass of the data. Now, when looking at the residual plot we see a "good" plot, that appears to have a random collection of points around the y = 0 line. This means our assumptions for linearity and constant variance are most likely met. Having the outliers decreased the R^2 value and model slope.
+
+```{r}
+#filters out the outlier values found in 2d
+pcb_log_filtered_2 <- pcb_log_filtered[-c(4,10),]
+
+#creates scatterplot of log(pcb85) vs log(pcb84) filtered to have no -Inf values and no outleirs
+ggplot(data=pcb_log_filtered_2, aes(x = pcb84, y = pcb85)) + 
+  geom_point() +
+  geom_smooth(method = "lm", se = FALSE)
+  labs(title = "Filtered logged PCB Levels 1985 vs 1984", x = "log(PCB 1984) (in ppm)", y ="log(PCB 1985) (in ppm)")
+
+```
+
+```{r 2e.2}
+ pcb_log_filtered_fit_2 <- lm(data = pcb_log_filtered_2, pcb85 ~ pcb84)
+
+  pcb_log_filtered_aug_2 <- augment(pcb_log_filtered_fit_2)
+  
+  ggplot(pcb_log_filtered_aug_2, aes(x = pcb84, y = .resid)) +
+    geom_point() +
+    geom_hline(yintercept = 0, linetype = "dashed") +
+    labs(title = "Log(Pcb) Resid Plot)", y = "Residuals", x = "Log(Pcb84)")
+
+
+  ggplot(pcb_log_filtered_aug_2, aes(sample = .resid)) +
+    geom_qq() +
+    geom_qq_line() +
+    labs(title = "Log(PCB) Q-Q Plot", y = "Sample Quantiles", x = "Normal Quantiles")
+
+```
+
+```{r}
+summary(pcb_log_filtered_fit)$r.squared
+
+summary(pcb_log_filtered_fit_2)$r.squared
+
+
+pcb_log_filtered_fit
+pcb_log_filtered_fit_2
 ```
 
