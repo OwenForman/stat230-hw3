@@ -155,7 +155,7 @@ pcb_log_filtered_2 <- pcb_log_filtered[-c(4,10),]
 #creates scatterplot of log(pcb85) vs log(pcb84) filtered to have no -Inf values and no outleirs
 ggplot(data=pcb_log_filtered_2, aes(x = pcb84, y = pcb85)) + 
   geom_point() +
-  geom_smooth(method = "lm", se = FALSE)
+  geom_smooth(method = "lm", se = FALSE) +
   labs(title = "Filtered logged PCB Levels 1985 vs 1984", x = "log(PCB 1984) (in ppm)", y ="log(PCB 1985) (in ppm)")
 
 ```
@@ -168,13 +168,13 @@ ggplot(data=pcb_log_filtered_2, aes(x = pcb84, y = pcb85)) +
   ggplot(pcb_log_filtered_aug_2, aes(x = pcb84, y = .resid)) +
     geom_point() +
     geom_hline(yintercept = 0, linetype = "dashed") +
-    labs(title = "Log(Pcb) Resid Plot)", y = "Residuals", x = "Log(Pcb84)")
+    labs(title = "Filtered Log(Pcb) Resid Plot", y = "Residuals", x = "Log(Pcb84)")
 
 
   ggplot(pcb_log_filtered_aug_2, aes(sample = .resid)) +
     geom_qq() +
     geom_qq_line() +
-    labs(title = "Log(PCB) Q-Q Plot", y = "Sample Quantiles", x = "Normal Quantiles")
+    labs(title = "Filtered Log(PCB) Q-Q Plot", y = "Sample Quantiles", x = "Normal Quantiles")
 
 ```
 
@@ -187,4 +187,12 @@ summary(pcb_log_filtered_fit_2)$r.squared
 pcb_log_filtered_fit
 pcb_log_filtered_fit_2
 ```
+
+2f)
+
+\textbf{Answer:} 
+Interpretation of R^2: The R^2 value is .9732 The interpretation of this that approx 97.32% of the variation in PCB levels in 1985 can be explained by the PCB levels in 1984.
+
+Interpretation of Slope: Doubling the PCB levels in 1984 is associated with an approximately 1.95-fold increase in the PCB levels in 1985 (Math attached as seperate pdf)
+
 
