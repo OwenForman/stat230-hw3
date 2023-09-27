@@ -4,19 +4,32 @@ author: "Owen Forman"
 output: pdf_document
 params:
   document_title: "Stat230 - HW 3"
+editor_options: 
+  markdown: 
+    wrap: 72
 ---
 
-
-``` {r setup}
+```{r setup}
 #loads necessary libraries
 library(ggplot2)
 library(patchwork)
 library(dplyr)
 library(broom)
+library(GGally)
 ```
+1b) \textbf{Answer:} Both models do not have constant variance. This is because they are both not following a linear trend, so when the SLR line is fitted, there will be non-constant variance as some fitted values are closer to the points than others. The difference between the two models, is that the simulated points in model 1 begin to diverge as x increases (aka residuals increase/decrease seemingly exponentially), whereas the simulated points in model 2 maintain their original trend (aka residuals increase/decrease as x increases, but not at an exponential rate). If we tried to use model 2 to make a prediction about model 1 it is likely that we would get an incorrect answer.
 
-2a)
-\textbf{Answer:} The extreme outlier case was Boston Harbor, which had extremely high pcb levels in 1984. Upon removing the outlier though, it still turns out that the data is not yet suited for a SLR model. We can see this visually in the scatter plot "PCB Levels 1985 vs 1984 (No Outlier)" since the trend does not appear to be linear. Additionally, after attempting to fit a SLR model, it becomes even clearer that the model is not appropriate, as the residual plot"Pcb Resid plot (No outliers)" shows clear grouping around x = 0 and residuals become more widespread at larger x's which is a clear patter. Thus an SLR model cannot be used despite removing the outlier.
+
+2a) \textbf{Answer:} The extreme outlier case was Boston Harbor, which
+had extremely high pcb levels in 1984. Upon removing the outlier though,
+it still turns out that the data is not yet suited for a SLR model. We
+can see this visually in the scatter plot "PCB Levels 1985 vs 1984 (No
+Outlier)" since the trend does not appear to be linear. Additionally,
+after attempting to fit a SLR model, it becomes even clearer that the
+model is not appropriate, as the residual plot"Pcb Resid plot (No
+outliers)" shows clear grouping around x = 0 and residuals become more
+widespread at larger x's which is a clear patter. Thus an SLR model
+cannot be used despite removing the outlier.
 
 ```{r problem 2a}
 #reads in data
@@ -62,7 +75,21 @@ pcb_new %>%
 
 2b)
 
-\textbf{Answer:} While we could not justify fitting a SLR model onto the previous graph in 2a), we can justify this model being used in the "Logged PCB Levels 1985 vs 1984" seen below. This is because the data has been transformed using the log function, which has uncovered the linear relationship between pcb84 and pcb85. This can clearly be seen visually, as the trend went from following an exponential line of some kind, to a more controlled linear line. While there are still outliers (which will be assessed in the coming problems), there are only really two or three of note, which may be the result of key information left out of this analysis. Though the reason these points are so extreme cannot be determined, it is safe to say given the low number of outliers, and the extremely strong linear relationship the rest of the data appears to follow, that we can still reasonably use an SLR model despite these outlier points.
+\textbf{Answer:} While we could not justify fitting a SLR model onto the
+previous graph in 2a), we can justify this model being used in the
+"Logged PCB Levels 1985 vs 1984" seen below. This is because the data
+has been transformed using the log function, which has uncovered the
+linear relationship between pcb84 and pcb85. This can clearly be seen
+visually, as the trend went from following an exponential line of some
+kind, to a more controlled linear line. While there are still outliers
+(which will be assessed in the coming problems), there are only really
+two or three of note, which may be the result of key information left
+out of this analysis. Though the reason these points are so extreme
+cannot be determined, it is safe to say given the low number of
+outliers, and the extremely strong linear relationship the rest of the
+data appears to follow, that we can still reasonably use an SLR model
+despite these outlier points.
+
 ```{r problem 2b}
 
 #creates scatterplot of log(pcb85) vs log(pcb84).
@@ -71,9 +98,14 @@ ggplot(data=pcb, aes(x = log(pcb84), y = log(pcb85))) +
   labs(title = "Logged PCB Levels 1985 vs 1984", x = "log(PCB 1984) (in ppm)", y ="log(PCB 1985) (in ppm)")
 
 ```
+
 2c)
 
-\textbf{Answer:} Some of the values = -Inf because the test sites had 0 listed for pcb levels in 1984 and 1985. Since the lim x -> 0 lnx = -Inf it is clear to see that when we too the natural log of these 0 values R spits back -Inf as the answer, since ln(0) is technically undefined.
+\textbf{Answer:} Some of the values = -Inf because the test sites had 0
+listed for pcb levels in 1984 and 1985. Since the lim x -\> 0 lnx = -Inf
+it is clear to see that when we too the natural log of these 0 values R
+spits back -Inf as the answer, since ln(0) is technically undefined.
+
 ```{r problem 2c}
 #creates mutated dataset with log(pcb85) and log(pcb84) values
 pcb_log <- pcb %>%
@@ -97,16 +129,30 @@ pcb_log_filtered <- pcb_log %>%
 
 2d)
 
-\textbf{Answer:}
-Model Assumptions:
-As currently stands, our model assumptions are not met. Firstly, there appears to be a clear linear trend in the Residual plot, which indicates that our assumption of linearity and constant variance are not reasonable for this model.
+\textbf{Answer:} Model Assumptions: As currently stands, our model
+assumptions are not met. Firstly, there appears to be a clear linear
+trend in the Residual plot, which indicates that our assumption of
+linearity and constant variance are not reasonable for this model.
 
-Next, for the assumption of Normality, we can observe the QQ plot. The QQ-plot is not perfect either, but does appear to generally track the expected normal quantiles. Other than the two outlier points which fall drastically off of the line, and a bit of bowing at both ends of the plot, it appears as if Normality may be met.  
+Next, for the assumption of Normality, we can observe the QQ plot. The
+QQ-plot is not perfect either, but does appear to generally track the
+expected normal quantiles. Other than the two outlier points which fall
+drastically off of the line, and a bit of bowing at both ends of the
+plot, it appears as if Normality may be met.
 
-Lastly, independence, which is especially hard to check in this example since almost no information about how the data was collected was given. However, one possible cause for concern is that its possible some of these rivers lead into each other (there is no evidence for or against this given in the data description so while it may be unlikely it can't be completely disregarded). If two or more of these rivers attach it wouldn't be absurd to see the pcb levels of one river affect that of another, causing them to become dependent.
+Lastly, independence, which is especially hard to check in this example
+since almost no information about how the data was collected was given.
+However, one possible cause for concern is that its possible some of
+these rivers lead into each other (there is no evidence for or against
+this given in the data description so while it may be unlikely it can't
+be completely disregarded). If two or more of these rivers attach it
+wouldn't be absurd to see the pcb levels of one river affect that of
+another, causing them to become dependent.
 
-Outliers:
-The two obvious outliers are Boston Harbor and Delaware Bay. which correspond to rows 4 and 10 respectively (in the filtered log dataset)
+Outliers: The two obvious outliers are Boston Harbor and Delaware Bay.
+which correspond to rows 4 and 10 respectively (in the filtered log
+dataset)
+
 ```{r problem 2d}
 #creates scatterplot of log(pcb85) vs log(pcb84) filtered to have no -Inf values.
 ggplot(data=pcb_log_filtered, aes(x = pcb84, y = pcb85)) + 
@@ -133,6 +179,7 @@ ggplot(data=pcb_log_filtered, aes(x = pcb84, y = pcb85)) +
     labs(title = "Log(PCB) Q-Q Plot", y = "Sample Quantiles", x = "Normal Quantiles")
 
 ```
+
 ```{r problem 2d.3}
 
 #finds which entries have resid > 2 (upper outlier) and resid < -1 (lower outlier)
@@ -146,7 +193,12 @@ pcb_log_filtered[c(4,10),]
 
 2e)
 
-\textbf{Answer:} After removing the outliers the model now appears to better represent the mass of the data. Now, when looking at the residual plot we see a "good" plot, that appears to have a random collection of points around the y = 0 line. This means our assumptions for linearity and constant variance are most likely met. Having the outliers decreased the R^2 value and model slope.
+\textbf{Answer:} After removing the outliers the model now appears to
+better represent the mass of the data. Now, when looking at the residual
+plot we see a "good" plot, that appears to have a random collection of
+points around the y = 0 line. This means our assumptions for linearity
+and constant variance are most likely met. Having the outliers decreased
+the R\^2 value and model slope.
 
 ```{r}
 #filters out the outlier values found in 2d
@@ -190,9 +242,112 @@ pcb_log_filtered_fit_2
 
 2f)
 
-\textbf{Answer:} 
-Interpretation of R^2: The R^2 value is .9732 The interpretation of this that approx 97.32% of the variation in PCB levels in 1985 can be explained by the PCB levels in 1984.
+\textbf{Answer:} Interpretation of R\^2: The R\^2 value is .9732 The
+interpretation of this that approx 97.32% of the variation in PCB levels
+in 1985 can be explained by the PCB levels in 1984.
 
-Interpretation of Slope: Doubling the PCB levels in 1984 is associated with an approximately 1.95-fold increase in the PCB levels in 1985 (Math attached as seperate pdf)
+Interpretation of Slope: Doubling the PCB levels in 1984 is associated
+with an approximately 1.95-fold increase in the PCB levels in 1985 (Math
+attached as seperate pdf)
+
+3.  
+
+3a)
+
+```{r problem 3a}
+#loads data for problem
+data(ex0914, package = "Sleuth3")
+
+#creates matrix of scatterplots
+ggpairs(ex0914) 
+```
+
+3b)
+
+```{r problem 3b}
+#fits linear model for Heart on Talk, bank, and walk
+ex0914_fit <- lm(Heart ~ Talk + Bank + Walk, data = ex0914)
+
+```
+
+3c)
+
+```{r problem 3c}
+ex0914_aug <- augment(ex0914_fit)
+
+#plots the residuals versus each of the predictors in addition to versus the fitted values
+plot1 <- ggplot(ex0914_aug, aes(x = Talk, y = .resid)) + 
+  geom_point() +
+  geom_hline(yintercept = 0, linetype = "dashed") +
+  labs(title = "Heart vs Talk Resid Plot", y = "Residuals", x = "Talk)")
+
+plot2 <- ggplot(ex0914_aug, aes(x = Bank, y = .resid)) + 
+  geom_point() + 
+  geom_hline(yintercept = 0, linetype = "dashed") +
+  labs(title = "Heart vs Bank Resid Plot", y = "Residuals", x = "Bank)")
+
+plot3 <- ggplot(ex0914_aug, aes(x = Walk, y = .resid)) + 
+  geom_point() +
+  geom_hline(yintercept = 0, linetype = "dashed") +
+  labs(title = "Heart vs Walk Resid Plot", y = "Residuals", x = "Walk)")
+
+plot4 <- ggplot(ex0914_aug, aes(x = .fitted, y = .resid)) +
+  geom_point() +
+  geom_hline(yintercept = 0, linetype = "dashed") +
+  labs(title = "Resid Vs Fitted Values", y = "Residuals", x = "Fitted Values)")
+
+#uses patchwork library to create 2x2 graph matrix
+(plot1 + plot2)/(plot3 + plot4)
+```
+
+3d)
+
+\textbf{Answer:} $\hat{Heart}$ = 3.178 - (0.1796)Talk + (0.4052)Bank +
+(0.4516)Walk SE: 6.3369, 0.2222, 0.1971, 0.2009
+
+Interpretation: Fixing the variable Talk ("obtained by recording
+responses of postal clerks explain-ing the difference between regular,
+certified, and insured mail and by dividing the total number of
+syllables by the time of their response" - Sleuth) and the variable Walk
+("walking speed of pedestrians over a distance of 60 feet during
+business hours on a clear summer day along a main downtown street" -
+Sleuth), a one unit increase (NOTE: units were not provided in the
+problem, could be minutes, seconds, etc) in the average time a bank
+clerk takes to make change for two \$20 bills or to give \$20 bills for
+change increases the age adjusted death rate from ischemic heart disease by .4052 (units not given but ostensibly) years.
+
+```{r problem 3d}
+ex0914_fit
+summary(ex0914_fit)
+```
+
+4a)
+\textbf{Answer:} In the first graphic, Storm Indices Vs ElNino Phase, it appears that, as if the ElNino year is warmer, the average storm index level decreases, whereas if the ElNino year is colder than the average storm index level decreases. In the second graphic, Storm Indices Vs West Africa (Wet/Dry), it appears that the average Storm Index is higher if West Africa is wet than if it is dry.
+
+```{r problem 4a}
+#loads data for problem
+data(ex1028, package = "Sleuth3")
+
+ggplot(data = ex1028, aes(x = ElNino, y = StormIndex, fill = ElNino)) + 
+  geom_boxplot() +
+  labs(title = "Storm Indices Vs ElNino Phase") +
+  scale_fill_manual(values = c("cold" = "cornflowerblue",
+                                "neutral" = "darkgoldenrod1",
+                                "warm" = "firebrick1" ))
+
+
+ex1028$WestAfrica <- factor(ex1028$WestAfrica, levels = c(0,1), labels = c("Dry", "Wet"))
+
+ggplot(data = ex1028, aes(x = WestAfrica, y = StormIndex, fill = WestAfrica)) + 
+  geom_boxplot() +
+  labs(title = "Storm Indices Vs West Africa (Wet/Dry)") +
+  scale_fill_manual(values = c("Wet" = "lightblue",
+                               "Dry" = "tomato1")) 
+```
+4b)
+
+```{r problem 4b}
+
+```
 
 
