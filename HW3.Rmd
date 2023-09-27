@@ -347,6 +347,10 @@ ggplot(data = ex1028, aes(x = WestAfrica, y = StormIndex, fill = WestAfrica)) +
 4b)
 
 ```{r problem 4b}
+#undos naming of factor's done in part a
+ex1028$WestAfrica <- factor(ex1028$WestAfrica, levels = c("Dry","Wet"), labels = c(0, 1))
+
+P
 
 ```
 
