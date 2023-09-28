@@ -343,15 +343,52 @@ ggplot(data = ex1028, aes(x = WestAfrica, y = StormIndex, fill = WestAfrica)) +
   labs(title = "Storm Indices Vs West Africa (Wet/Dry)") +
   scale_fill_manual(values = c("Wet" = "lightblue",
                                "Dry" = "tomato1")) 
+
 ```
 4b)
-
+\textbf{Answer:} While we haven't expressly look at what characteristics makes a "good"/"bad" residual boxplot, it is my understanding that if our assumptions for a SLR model are met we'd expect to see very similar boxplots across the board, and that the mean should fall on approx y=0. Additionally, we'd expect the sizes of the boxplots to fall relatively in line with eachother, to show that the residuals are the same for all factors and don't follow a trend based on specific factors. Clearly when we group by the ElNino variable these rulings are not met, as the mean residuals appear to differ drastically between the warm, cold, and neutral factors. When grouping by the WestAfrica variable it appears to be significantly more in line with expectations, although it does appear as if the mean residuals of the Wet factor are slightly lower, and the length of the box is slightly greater (meaning the IQR is greater for Wet vs Dry, when they should be pretty similar if our assumptions are met) which is not perfect, and again indicates that our assumptions are probably not met.
 ```{r problem 4b}
-#undos naming of factor's done in part a
-ex1028$WestAfrica <- factor(ex1028$WestAfrica, levels = c("Dry","Wet"), labels = c(0, 1))
+#fits linear model of StormIndex against ElNino and WestAfrica
+ex1028_fit <- lm(StormIndex ~ ElNino + WestAfrica, data = ex1028)
 
-P
+#augments LM
+ex1028_aug <- augment(ex1028_fit)
+
+#creates resid boxplot for ElNino variable
+ggplot(data = ex1028_aug, aes(x = ElNino, y = .resid)) +
+  geom_boxplot()
+
+#creates resid boxplot for West Africa variable
+ggplot(data = ex1028_aug, aes(x = WestAfrica, y = .resid)) +
+  geom_boxplot()
 
 ```
 
+4c)
+
+\textbf{Answer:} These residual boxplots are much more in line with what we'd expect to see given our assumptions are met. Namely, the IQR is relatively equal across factors (for both variables) and they all have mean residual values at approx 0, which is to be expected. While there is still slight variance in the means for each factor of the ElNino variable, these plots are significantly "better" than the previous un-logged ones, as they fall much more in line with whats to be expected for a SLR model.
+
+```{r}
+#fits linear model of log(StormIndex) against ElNino and WestAfrica
+ex1028_fit_log <- lm(log(StormIndex) ~ ElNino + WestAfrica, data = ex1028)
+
+#augments LM
+ex1028_aug_log <- augment(ex1028_fit_log)
+
+#creates resid boxplot for ElNino variable
+ggplot(data = ex1028_aug_log, aes(x = ElNino, y = .resid)) +
+  geom_boxplot()
+
+#creates resid boxplot for West Africa variable
+ggplot(data = ex1028_aug_log, aes(x = WestAfrica, y = .resid)) +
+  geom_boxplot()
+
+```
+
+4d)
+\textbf{Answer:} The interpretation is: holding whether or not West Africa was Wet or Dry fixed, the estimated difference in mean Storm Index value between a warm and cold El-Nino is -57.76 (aka cold El Nino has 57.76 higher storm index holding Wet/Dry West Africa fixed)
+
+```{r}
+ex1028_fit
+```
 
