@@ -17,7 +17,7 @@ library(dplyr)
 library(broom)
 library(GGally)
 ```
-1b) \textbf{Answer:} Both models do not have constant variance. This is because they are both not following a linear trend, so when the SLR line is fitted, there will be non-constant variance as some fitted values are closer to the points than others. The difference between the two models, is that the simulated points in model 1 begin to diverge as x increases (aka residuals increase/decrease seemingly exponentially), whereas the simulated points in model 2 maintain their original trend (aka residuals increase/decrease as x increases, but not at an exponential rate). If we tried to use model 2 to make a prediction about model 1 it is likely that we would get an incorrect answer.
+1b) \textbf{Answer:} Both models do not have constant variance. This is because they are both not following a linear trend, so when the SLR line is fitted, there will be non-constant variance as some fitted values are closer to the points than others. The difference between the two models, is that the simulated points in model 1 begin to diverge as x increases (aka residuals increase/decrease seemingly exponentially), whereas the simulated points in model 2 maintain their (still non-linear) original trend, which would cause the residuals to follow the same curved line as the model in the residual plot. If we tried to use model 2 to make a prediction about model 1 it is likely that we would get an incorrect answer, though we could use model 2 to potential predict some kind of mean value (or close to it) for model 1, as it appears like model 2 follows the same non-linear trend, just without divergence of points.
 
 
 2a) \textbf{Answer:} The extreme outlier case was Boston Harbor, which
