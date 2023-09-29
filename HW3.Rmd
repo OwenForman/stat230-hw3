@@ -321,6 +321,10 @@ ex0914_fit
 summary(ex0914_fit)
 ```
 
+3e ) Using the data we cannot provide evidence to the claim that walking quickly causes an increase in the risk of heart disease. This is because the study conducted was observational in nature and not controlled. Claiming that walking faster caused increase risk of heart disease would imply causation, which absolutely cannot be done for observational studies. Also, our data was only taken from US cities, so even if some kind of relationship could be drawn, it would be improper to expand this claim to all people, as our claim can only be about the population the sample was taken from. 
+
+
+
 4a)
 \textbf{Answer:} In the first graphic, Storm Indices Vs ElNino Phase, it appears that, as if the ElNino year is warmer, the average storm index level decreases, whereas if the ElNino year is colder than the average storm index level decreases. In the second graphic, Storm Indices Vs West Africa (Wet/Dry), it appears that the average Storm Index is higher if West Africa is wet than if it is dry.
 
